@@ -72,7 +72,7 @@ Resources:
                   os.remove("/tmp/" + filename)
         
         
-          def lambda_handler(event, context):
+          def handler(event, context):
               ec2_servicecode()
               rds_servicecode()
               print ('Finished!')
