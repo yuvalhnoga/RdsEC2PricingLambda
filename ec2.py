@@ -18,7 +18,7 @@ response = client.get_products(
 	{
             'Field': 'location',
             'Type': 'TERM_MATCH',
-            'Value': 'EU (Ireland)',
+            'Value': 'US East (N. Virginia)',
         },
     ],
 )
@@ -27,16 +27,18 @@ response = client.get_products(
 
 for PRODUCT in response['PriceList']:
     mydict = json.loads(PRODUCT)
-    print ('"' + mydict['product']['attributes']['servicecode'], end='",')
-    print ('"' + mydict['product']['attributes']['location'], end='",')
-    print ('"' + mydict['product']['sku'], end='",')
-    print ('"' + mydict['product']['attributes']['instanceType'], end='",')
-    print ('"' + mydict['product']['attributes']['operatingSystem'], end='",')
-    print ('"' + mydict['product']['attributes']['preInstalledSw'], end='",')
-    first = next(iter(mydict['terms']['OnDemand']))
-    second = next(iter(mydict['terms']['OnDemand'][first]['priceDimensions']))
-    print ('"' + mydict['terms']['OnDemand'][first]['priceDimensions'][second]['pricePerUnit']['USD'], end='",')
-    print ('"' + mydict['terms']['OnDemand'][first]['priceDimensions'][second]['description'], end='"\n')
+    print (mydict)
+    # if mydict['product']['productFamily'] == "Compute Instance":
+    #     print ('"' + mydict['product']['attributes']['servicecode'], end='",')
+    #     print ('"' + mydict['product']['attributes']['location'], end='",')
+    #     print ('"' + mydict['product']['sku'], end='",')
+    #     print ('"' + mydict['product']['attributes']['instanceType'], end='",')
+    #     print ('"' + mydict['product']['attributes']['operatingSystem'], end='",')
+    #     print ('"' + mydict['product']['attributes']['preInstalledSw'], end='",')
+    #     first = next(iter(mydict['terms']['OnDemand']))
+    #     second = next(iter(mydict['terms']['OnDemand'][first]['priceDimensions']))
+    #     print ('"' + mydict['terms']['OnDemand'][first]['priceDimensions'][second]['pricePerUnit']['USD'], end='",')
+    #     print ('"' + mydict['terms']['OnDemand'][first]['priceDimensions'][second]['description'], end='"\n')
     
 
 

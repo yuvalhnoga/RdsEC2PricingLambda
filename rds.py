@@ -10,11 +10,6 @@ response = client.get_products(
             'Type': 'TERM_MATCH',
             'Value': 'AmazonRDS',
         },
-        {
-            'Field': 'instanceType',
-            'Type': 'TERM_MATCH',
-            'Value': 'db.m3.xlarge',
-        },
 	{
             'Field': 'location',
             'Type': 'TERM_MATCH',
