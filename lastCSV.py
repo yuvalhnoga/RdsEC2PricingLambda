@@ -5,8 +5,8 @@ import datetime
 import pprint
 import os
 
-regionsDict = {'Africa (Cape Town)': 'af_south_1', 'Asia Pacific (Mumbai)': 'ap_south_1',
-               'Asia Pacific (Osaka-Local)': 'osaka_local', 'Asia Pacific (Seoul)': 'ap_northeast_1',
+regionsDict = {'Africa (Cape Town)': 'af_south_1', 'Asia Pacific (Hong Kong)': 'ap_east_1', 'Asia Pacific (Mumbai)': 'ap_south_1',
+               'Asia Pacific (Osaka-Local)': 'ap_northeast_3', 'Asia Pacific (Seoul)': 'ap_northeast_2',
                'Asia Pacific (Singapore)': 'ap_southeast_1', 'Asia Pacific (Sydney)': 'ap_southeast_2',
                'Asia Pacific (Tokyo)': 'ap_northeast_1', 'Canada (Central)': 'ca_central_1',
                'EU (Frankfurt)': 'eu_central_1', 'EU (Ireland)': 'eu_west_1', 'EU (London)': 'eu_west_2',
