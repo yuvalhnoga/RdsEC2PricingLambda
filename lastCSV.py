@@ -58,6 +58,11 @@ def writeReserved(reserved_dict, location, sku, instanceType, operatingSystem, p
         if "Fee" not in reserved_type:
             file.writerow([location, sku, instanceType, operatingSystem, preInstalledSw.replace(' ','_'), reserved_type, reserved_dict[reserved_type], reserved_dict[reserved_type + ".Fee"]])
 
+def writeReservedRDS(reserved_dict, location, sku, instanceType, deploymentOption, file):
+    for reserved_type in reserved_dict.keys():
+        if "Fee" not in reserved_type:
+            file.writerow([location, sku, instanceType, deploymentOption.replace('-','_'), reserved_type, reserved_dict[reserved_type], reserved_dict[reserved_type + ".Fee"]])
+
 def ec2_servicecode(servicecode,region):
     client = boto3.client('pricing', region_name='us-east-1')
     s3 = boto3.resource('s3')
@@ -113,9 +118,64 @@ def ec2_servicecode(servicecode,region):
     s3.meta.client.upload_file( "/tmp/" + filename, "irelandec2-prices", regionsDict.get(region).replace('_','-') + "/" + "EC2/" + filename)
     os.remove("/tmp/" + filename)
 
+def rds_servicecode(servicecode,region):
+    client = boto3.client('pricing', region_name='us-east-1')
+    s3 = boto3.resource('s3')
+    now = datetime.datetime.now()
+
+    response = client.get_products(
+        ServiceCode='AmazonRDS',
+        Filters=[
+            {
+                'Field': 'ServiceCode',
+                'Type': 'TERM_MATCH',
+                'Value': servicecode,
+            },
+            {
+                'Field': 'location',
+                'Type': 'TERM_MATCH',
+                'Value': region,
+            },
+        ],
+    )
+
+    filename = regionsDict.get(region) + "_" + servicecode + "_" + now.strftime("%Y_%m_%d") + ".csv"
+    test_file = open("/tmp/" + filename, mode='w')
+    test_writer = csv.writer(test_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    test_writer.writerow(['Region', 'SKU', 'InstanceType', 'deploymentOption', 'Pricing' 'Plan', 'Hourly', 'Upfront'])
+
+    for PRODUCT in response['PriceList']:
+        mydict = json.loads(PRODUCT)
+        product_name = mydict.get('product')
+        if product_name.get('productFamily') not in ['Database Instance']:
+            continue
+        servicecode = mydict['product']['attributes']['servicecode']
+        location = mydict['product']['attributes']['location']
+        sku = mydict['product']['sku']
+        instanceType = mydict['product']['attributes']['instanceType']
+        deploymentOption = mydict['product']['attributes']['deploymentOption']
+        terms = mydict.get('terms')
+        ondemand_terms = terms.get('OnDemand',{})
+        priceOnDemand = 0.0
+        
+        for ondemand_term in ondemand_terms:
+            price_dimensions = ondemand_terms.get(ondemand_term).get('priceDimensions')
+            for price_dimension in price_dimensions.keys():
+                priceOnDemand = price_dimensions.get(price_dimension).get('pricePerUnit').get('USD')
+        test_writer.writerow([regionsDict[location], sku, instanceType, deploymentOption.replace('-','_'), 'OnDemand' , str(priceOnDemand).rstrip('0').rstrip('.'), '0'])
+
+        reserved_terms = terms.get('Reserved', {})
+        if reserved_terms:
+            reserved_dict = get_reserved_pricing(terms)
+            writeReservedRDS(reserved_dict, regionsDict[location], sku, instanceType, deploymentOption, test_writer)
+
+    s3.meta.client.upload_file( "/tmp/" + filename, "irelandec2-prices", regionsDict.get(region).replace('_','-') + "/" + "RDS/" + filename)
+    os.remove("/tmp/" + filename)
+
 def lambda_handler(event, context):
     for region in regionsDict:
         ec2_servicecode("AmazonEC2",region)
+        rds_servicecode("AmazonRDS", region)
     print ('Finished!')
 
 
