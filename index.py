@@ -46,9 +46,10 @@ def get_reserved_pricing(terms):
             else:
                 upfront_price = temp_price
         local_term = translate_reserved_terms(term_attributes)
-        lease_in_years = term_attributes.get('LeaseContractLength')[0]
-        hours_in_term = int(lease_in_years[0]) * 365 * 24
-        price = float(price_per_hour) + (float(upfront_price)/hours_in_term)
+        #lease_in_years = term_attributes.get('LeaseContractLength')[0]
+        #hours_in_term = int(lease_in_years[0]) * 365 * 24
+        #price = float(price_per_hour) + (float(upfront_price)/hours_in_term)
+        price = float(price_per_hour)
         pricing[local_term] = format_price(price)
         pricing[local_term + ".Fee"] = format_price(upfront_price)
     return pricing
@@ -115,7 +116,7 @@ def ec2_servicecode(servicecode,region):
             reserved_dict = get_reserved_pricing(terms)
             writeReserved(reserved_dict, regionsDict[location], sku, instanceType, operatingSystem, preInstalledSw, test_writer)
 
-    s3.meta.client.upload_file( "/tmp/" + filename, os.environ['s3_bucket'], regionsDict.get(region).replace('_','-') + "/" + "EC2/" + filename)
+    s3.meta.client.upload_file( "/tmp/" + filename, os.environ['s3_bucket'], "Services/" + "EC2/" + filename)
     os.remove("/tmp/" + filename)
 
 def rds_servicecode(servicecode,region):
@@ -169,7 +170,7 @@ def rds_servicecode(servicecode,region):
             reserved_dict = get_reserved_pricing(terms)
             writeReservedRDS(reserved_dict, regionsDict[location], sku, instanceType, deploymentOption, test_writer)
 
-    s3.meta.client.upload_file( "/tmp/" + filename, os.environ['s3_bucket'], regionsDict.get(region).replace('_','-') + "/" + "RDS/" + filename)
+    s3.meta.client.upload_file( "/tmp/" + filename, os.environ['s3_bucket'], "Services/" + "RDS/" + filename)
     os.remove("/tmp/" + filename)
 
 def handler(event, context):
