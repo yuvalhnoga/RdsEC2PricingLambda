@@ -46,9 +46,10 @@ def get_reserved_pricing(terms):
             else:
                 upfront_price = temp_price
         local_term = translate_reserved_terms(term_attributes)
-        lease_in_years = term_attributes.get('LeaseContractLength')[0]
-        hours_in_term = int(lease_in_years[0]) * 365 * 24
-        price = float(price_per_hour) + (float(upfront_price)/hours_in_term)
+        #lease_in_years = term_attributes.get('LeaseContractLength')[0]
+        #hours_in_term = int(lease_in_years[0]) * 365 * 24
+        #price = float(price_per_hour) + (float(upfront_price)/hours_in_term)
+        price = float(price_per_hour)
         pricing[local_term] = format_price(price)
         pricing[local_term + ".Fee"] = format_price(upfront_price)
     return pricing

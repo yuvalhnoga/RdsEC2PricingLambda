@@ -85,7 +85,7 @@ def ec2_servicecode(servicecode,region):
         ],
     )
 
-    filename = regionsDict.get(region) + "_" + servicecode + "_" + now.strftime("%Y_%m_%d") + ".csv"
+    filename = regionsDict.get(region) + "_" + servicecode + ".csv"
     test_file = open("/tmp/" + filename, mode='w')
     test_writer = csv.writer(test_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     test_writer.writerow(['Region', 'SKU', 'InstanceType', 'operationSystem', 'preInstalledSW', 'Pricing' 'Plan', 'Hourly', 'Upfront'])
@@ -140,7 +140,7 @@ def rds_servicecode(servicecode,region):
         ],
     )
 
-    filename = regionsDict.get(region) + "_" + servicecode + "_" + now.strftime("%Y_%m_%d") + ".csv"
+    filename = regionsDict.get(region) + "_" + servicecode + ".csv"
     test_file = open("/tmp/" + filename, mode='w')
     test_writer = csv.writer(test_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     test_writer.writerow(['Region', 'SKU', 'InstanceType', 'deploymentOption', 'Pricing' 'Plan', 'Hourly', 'Upfront'])
