@@ -67,7 +67,7 @@ def writeReservedRDS(reserved_dict, location, sku, instanceType, deploymentOptio
 def ec2_servicecode(servicecode,region):
     client = boto3.client('pricing', region_name='us-east-1')
     s3 = boto3.resource('s3')
-    now = datetime.datetime.now()
+    #now = datetime.datetime.now()
 
     response = client.get_products(
         ServiceCode='AmazonEC2',
@@ -122,7 +122,7 @@ def ec2_servicecode(servicecode,region):
 def rds_servicecode(servicecode,region):
     client = boto3.client('pricing', region_name='us-east-1')
     s3 = boto3.resource('s3')
-    now = datetime.datetime.now()
+    #now = datetime.datetime.now()
 
     response = client.get_products(
         ServiceCode='AmazonRDS',
