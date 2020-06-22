@@ -4,7 +4,7 @@ Parameters:
   s3bucket:  
     Type: String
     Description: Enter the name of the S3 Bucket with the lambda zipfile. 
-    Default: abc
+    Default: Enter the bucket you created.
 
 Resources:
   LambdaExecutionRole:

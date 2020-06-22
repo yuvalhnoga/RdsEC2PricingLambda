@@ -14,4 +14,6 @@ Cloudformation yaml that creates:
 - Create a S3 bucket and insert the **index.py.zip** to that bucket.
 - Create a stack and upload the **pricingCFN.yaml**
 - Enter the newly created S3 bucket name.
+- You will need to manually run the Lambda and Crawler.
+- Lambda will run **daily** by cloudwatch event.
 - Have fun
