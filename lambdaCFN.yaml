@@ -3,7 +3,7 @@ Parameters:
 
   s3bucket:  
     Type: String
-    Description: Enter the name of the S3 Bucket you want to insert the CSV files to. 
+    Description: Enter the name of the S3 Bucket with the lambda zipfile. 
     Default: abc
 
 Resources:
@@ -41,7 +41,8 @@ Resources:
           s3_bucket:
             Ref: s3bucket
       Code:
-        S3Bucket: irelandec2-prices
+        S3Bucket: 
+          Ref: s3bucket
         S3Key: index.py.zip
       Handler: index.handler
       Runtime: python3.7
@@ -72,3 +73,42 @@ Resources:
         Fn::GetAtt: 
           - "ScheduledRule"
           - "Arn"
+  CrawlerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "glue.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole'           
+        - 'arn:aws:iam::aws:policy/AmazonS3FullAccess'
+        - 'arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess'
+  GlueDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: "ait_organisations_athena_cur_cfn"
+        Description: "Prices database"
+  GlueCrawler:
+    Type: AWS::Glue::Crawler
+    Properties:
+      Name: "price_api"
+      Role: !GetAtt CrawlerRole.Arn
+      DatabaseName: !Ref GlueDatabase
+      Targets:
+        S3Targets:
+          - Path: !Sub 's3://${s3bucket}/Services/EC2'
+          - Path: !Sub 's3://${s3bucket}/Services/RDS'
+      SchemaChangePolicy:
+        DeleteBehavior: "LOG"
+      Configuration: "{\"Version\":1.0,\"Grouping\":{\"TableGroupingPolicy\":\"CombineCompatibleSchemas\"},\"CrawlerOutput\":{\"Partitions\":{\"AddOrUpdateBehavior\":\"InheritFromTable\"}}}"
+
